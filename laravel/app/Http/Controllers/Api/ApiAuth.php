@@ -35,7 +35,7 @@ class ApiAuth extends Controller
                 "token"=> $token,
                 "id"=> $user->id,
                 "fio"=> $valid_data['fio']
-            ]);
+            ], 201);
         }
 
 
@@ -48,20 +48,25 @@ class ApiAuth extends Controller
 
         if (Auth::attempt($valid_data)) {
             $user = (object) Auth::user();
-            $token = $user
+            $token = $user->createToken('kinotower')->plaunTextToken;
             return response()->json([
                 "status"=> "success",
                 "token"=> $token,
                 "id"=> $user->id,
                 "fio"=> $valid_data['fio']
-            ]);
+            ], 200);
         }
+
+        return response()->json([
+            "status"=> "invalid",
+            "message"=> "Wrong email or password"
+        ], 401);
 
     }
     public function signout(Request $request) {
         $request->user()->currentAccessToken()->delete();
         return response()->json([
             "status"=> "success"
-        ]);
+        ], 200);
     }
 }

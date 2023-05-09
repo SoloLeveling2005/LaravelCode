@@ -19,6 +19,14 @@ class User extends Authenticatable
         return $this->belongsTo(Gender::class, 'gender_id', 'id');
     }
 
-    
-    
+    public function reviewCount() {
+        return $this->
+    }
+
+    public function ratingCount() {
+        return $this->
+    }
+
+
+
 }
