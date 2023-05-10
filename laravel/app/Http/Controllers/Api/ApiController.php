@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Country;
+use App\Models\Gender;
 use App\Models\Rating;
 use App\Models\Review;
 use App\Models\User;
@@ -51,9 +53,47 @@ class ApiController extends Controller
         dd($data);
         return response()->json($data, 200);
     }
-    //    todo не сделан
     public function film(Request $request, $id) {
-        $film = Film::where(['id'=>$id])->get()->first();
+        $film = Film::with(['ratings','categories','country','reviews'])->where(['id'=>$id])->first();
+        if (!$film) {
+            return response()->json([
+                'status'=>'error',
+                'message'=>'Film not found'
+            ], 404);
+        }
+        $categories = collect($film->categories)->map(function ($category) {
+            return [
+                'id'=>$category->id,
+                'name'=>$category->name
+            ];
+        });
+        $reviewCount = count($film->reviews);
+        $ratingAvg_array = [];
+        foreach ($film->ratings as $rating) {
+            $ratingAvg_array[] = $rating->ball;
+        }
+        $sum = array_sum($ratingAvg_array);
+        $count = count($ratingAvg_array);
+        $ratingAvg = $sum / $count;
+
+        return response()->json([
+            "id"=> $film->id,
+            "name"=> $film->name,
+            "duration"=> $film->duration,
+            "year_of_issue"=> $film->year_of_issue,
+            "age"=> $film->age,
+            "link_img"=> $film->link_img,
+            "link_kinopoisk"=> $film->link_kinopoisk,
+            "link_video"=> $film->link_video,
+            "created_at"=> $film->created_at,
+            "country"=> [
+                "id"=> $film->country->id,
+                "name"=> $film->country->name
+            ],
+            "categories"=> $categories,
+            "ratingAvg"=> $ratingAvg,
+            "reviewCount"=> $reviewCount
+        ],200);
     }
     public function categories(Request $request) {
         $reviews = collect(Review::with(['user','films'])->get())->map(function ($review) {
@@ -73,42 +113,54 @@ class ApiController extends Controller
         ], 200);
     }
     public function countries(Request $request) {
-
+        $countries = Country::all();
+        $countries = collect($countries)->map(function ($country) {
+            return [
+                "id"=> $country->id,
+                "name"=> $country->name,
+                "filmCount"=> count(Film::where(['country_id'=>$country->id])->get())
+            ];
+        });
+        return response()->json([
+            'countries'=>$countries
+        ], 200);
     }
     public function genders(Request $request) {
-
+        $genders = Gender::all();
+        $genders = collect($genders)->map(function ($gender) {
+            return response()->json([
+                "id"=> $gender->id,
+                "name"=> $gender->name
+            ]);
+        });
+        return response()->json([
+            'genders'=>$genders
+        ]);
     }
 
-//    todo не сделан
     public function film_reviews(Request $request, $film_id) {
-        $film = Film::with(['categories'])->where(['id'=>$film_id])->first();
+        $film = Film::with(['categories','reviews'])->where(['id'=>$film_id])->first();
 
         if ($film) {
-            $reviews = collect($film->categories)->map(function ($category) use ($film) {
-                return [
-                    "id"=> $category->id,
-                    "user"=> [
-                        "id"=> 1,
-                        "fio"=> "Ivanov Ivan"
-                    ],
-                    "message"=> "Very Good!",
-                    "created_at"=> "2023-02-15T21:59:35.000Z",
-                ];
-            });
             return response()->json([
-                "reviews"=> [
-                    [
-                        "id"=> 1,
-                        "user"=> [
-                            "id"=> 1,
-                            "fio"=> "Ivanov Ivan"
-                        ],
-                        "message"=> "Very Good!",
-                        "created_at"=> "2023-02-15T21:59:35.000Z",
-                    ]
-                ]
-            ]);
+                "message"=> "Film not found"
+            ], 404);
         }
+        $reviews = collect($film->reviews)->map(function ($review) use ($film) {
+            return [
+                "id"=> $review->id,
+                "user"=> [
+                    "id"=> $review->user()->id,
+                    "fio"=> $review->user()->fio
+                ],
+                "message"=> $review->message,
+                "created_at"=> $review->created_at,
+            ];
+        });
+        return response()->json([
+            "reviews"=> $reviews
+        ], 200);
+
     }
 
     public function user(Request $request, $id) {

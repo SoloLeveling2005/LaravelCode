@@ -13,7 +13,7 @@ class Film extends Model
 
     protected $guarded = [];
 
-    public function rating () {
+    public function ratings () {
         return $this->hasMany(Rating::class, 'id', 'film_id');
     }
     public function categories () {
