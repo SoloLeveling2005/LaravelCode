@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('films', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->unsignedBigInteger('country_id')->nullable();
+            $table->foreignId('country_id')->constrained('countries')->cascadeOnUpdate()->cascadeOnDelete();
             $table->unsignedInteger('duration');
             $table->year('year_of_issue');
             $table->integer('age');
@@ -25,8 +25,6 @@ return new class extends Migration
             $table->string('link_video', 255);
             $table->timestamps();
             $table->softDeletes();
-
-            $table->foreign('country_id')->references('id')->on('countries');
         });
     }
 

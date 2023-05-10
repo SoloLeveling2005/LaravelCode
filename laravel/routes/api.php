@@ -13,7 +13,7 @@ use \App\Http\Controllers\Api\ApiAuth;
 | routes are loaded by the RouteServiceProvider within a group which
 | is assigned the "api" middleware group. Enjoy building your API!
 |
-*/  
+*/
 
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     // return $request->user();
@@ -31,9 +31,9 @@ Route::controller(ApiController::class)->group(function () {
     Route::match(['PUT','DELETE'],'users', 'users')->name('users');
     Route::match(['POST','GET'],'users/{user_id}/reviews', 'user_reviews')->name('user_reviews');
     Route::delete('users/{user_id}/reviews/{id}', 'user_review')->name('user_review');
-    Route::match(['POST','GET'],'users/{user-id}/ratings', 'user_ratings')->name('user_ratings');
+    Route::match(['POST','GET'],'users/{user_id}/ratings', 'user_ratings')->name('user_ratings');
     Route::delete('users/{user_id}/ratings/{id}', 'user_rating')->name('user_rating');
-    
+
 });
 
 Route::controller(ApiAuth::class)->group(function () {

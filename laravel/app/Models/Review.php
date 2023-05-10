@@ -10,5 +10,9 @@ class Review extends Model
     use HasFactory;
 
     protected $guarded = [];
-    
+
+    public function film () {
+        return $this->belongsTo(Film::class, 'film_id', 'id');
+    }
+
 }

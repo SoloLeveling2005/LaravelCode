@@ -20,11 +20,11 @@ class User extends Authenticatable
     }
 
     public function reviewCount() {
-        return $this->
+        return count($this->hasMany(Review::class, 'user_id', 'id'));
     }
 
     public function ratingCount() {
-        return $this->
+        return count($this->hasMany(Rating::class, 'user_id', 'id'));
     }
 
 

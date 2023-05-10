@@ -15,15 +15,13 @@ return new class extends Migration
     {
         Schema::create('reviews', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('film_id')->nullable();
-            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreignId('film_id')->constrained('films')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnUpdate()->cascadeOnDelete();
             $table->text('message');
             $table->timestamps();
             $table->integer('is_approved')->default(0);
             $table->softDeletes();
 
-            $table->foreign('film_id')->references('id')->on('films');
-            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 

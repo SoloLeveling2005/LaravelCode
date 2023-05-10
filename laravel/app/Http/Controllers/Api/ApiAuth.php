@@ -21,7 +21,7 @@ class ApiAuth extends Controller
             'fio'=>['required','min:2','max:150'],
             'email'=>['required','email','unique','min:4','max:50'],
             'password'=>['required','min:6','max:32'],
-            'birtday'=>['required','data'],
+            'birthday'=>['required','data'],
             'gender_id'=>['required','exists:genders,id'],
         ]);
 
