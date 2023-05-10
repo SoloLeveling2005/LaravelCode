@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 
 class ApiController extends Controller
 {
-    // Доделать
+    //    todo не сделан
     public function films(Request $request) {
         $page = $request->get('page', 1);
         $size = $request->get('size', 10);
@@ -51,11 +51,26 @@ class ApiController extends Controller
         dd($data);
         return response()->json($data, 200);
     }
+    //    todo не сделан
     public function film(Request $request, $id) {
         $film = Film::where(['id'=>$id])->get()->first();
     }
     public function categories(Request $request) {
-
+        $reviews = collect(Review::with(['user','films'])->get())->map(function ($review) {
+            $filmCount = 0;
+            foreach ($review->films as $films) {
+                $filmCount += $films->count(); // Подсчет количества фильмов и сохранение в массиве по имени категории
+            }
+            return [
+                "id"=> $review,
+                "name"=> $review->name,
+                "parentCategory"=> Review::where(['parent_id'=>$review->parent_id])->first(),
+                "filmCount"=> $filmCount
+            ];
+        });
+        return response()->json([
+            "reviews"=> $reviews
+        ], 200);
     }
     public function countries(Request $request) {
 
@@ -63,8 +78,37 @@ class ApiController extends Controller
     public function genders(Request $request) {
 
     }
+
+//    todo не сделан
     public function film_reviews(Request $request, $film_id) {
-        $films =
+        $film = Film::with(['categories'])->where(['id'=>$film_id])->first();
+
+        if ($film) {
+            $reviews = collect($film->categories)->map(function ($category) use ($film) {
+                return [
+                    "id"=> $category->id,
+                    "user"=> [
+                        "id"=> 1,
+                        "fio"=> "Ivanov Ivan"
+                    ],
+                    "message"=> "Very Good!",
+                    "created_at"=> "2023-02-15T21:59:35.000Z",
+                ];
+            });
+            return response()->json([
+                "reviews"=> [
+                    [
+                        "id"=> 1,
+                        "user"=> [
+                            "id"=> 1,
+                            "fio"=> "Ivanov Ivan"
+                        ],
+                        "message"=> "Very Good!",
+                        "created_at"=> "2023-02-15T21:59:35.000Z",
+                    ]
+                ]
+            ]);
+        }
     }
 
     public function user(Request $request, $id) {

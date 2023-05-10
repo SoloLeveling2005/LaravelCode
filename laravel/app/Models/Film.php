@@ -15,14 +15,14 @@ class Film extends Model
 
     public function rating () {
         return $this->hasMany(Rating::class, 'id', 'film_id');
-    } 
+    }
     public function categories () {
-        return $this->hasMany(Rating::class, 'film_id', 'id');
+        return $this->hasManyThrough(Category::class, Category_film::class, 'film_id', 'id', 'id', 'category_id');
     }
     public function country () {
-        return $this->hasMany(Rating::class, 'film_id', 'id');
+        return $this->belongsTo(Country::class, 'country_id', 'id');
     }
     public function reviews () {
-        return $this->hasMany(Raview::class, 'film_id', 'id');
+        return $this->hasMany(Review::class, 'film_id', 'id');
     }
 }
