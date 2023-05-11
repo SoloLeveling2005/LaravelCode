@@ -37,7 +37,7 @@ class ApiAuth extends Controller
                 "fio"=> $valid_data['fio']
             ], 201);
         }
-
+        return "ERROR";
 
     }
     public function signin(Request $request) {

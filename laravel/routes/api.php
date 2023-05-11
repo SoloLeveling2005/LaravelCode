@@ -20,6 +20,12 @@ use \App\Http\Controllers\Api\ApiAuth;
 // });
 
 
+Route::controller(ApiAuth::class)->group(function () {
+    Route::post('signin', 'signin')->name('signin');
+    Route::post('signup', 'signup')->name('signup');
+    Route::post('signout', 'signout')->name('signout');
+});
+
 Route::controller(ApiController::class)->group(function () {
     Route::get('films', 'films')->name('films');
     Route::get('films/{id}', 'film')->name('film');
@@ -36,8 +42,12 @@ Route::controller(ApiController::class)->group(function () {
 
 });
 
-Route::controller(ApiAuth::class)->group(function () {
-    Route::get('signin', 'signin')->name('signin');
-    Route::get('signup', 'signup')->name('signup');
-    Route::get('signout', 'signout')->name('signout');
+
+
+
+Route::fallback(function () {
+    return response()->json([
+        'status'=>'error',
+        'message'=>'Method not allowed'
+    ], 405);
 });
