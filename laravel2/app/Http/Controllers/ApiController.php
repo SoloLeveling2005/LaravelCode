@@ -243,21 +243,7 @@ class ApiController extends Controller
 
             $tickets[] = $ticket;
         }
-
-
         return response()->json(ConcertTicket::collection(collect($tickets)), 200);
-
-
-
-
-
-
-
-
-
-
-
-
     }
     public function tickets(Request $request)
     {
@@ -275,6 +261,9 @@ class ApiController extends Controller
         // TODO Не реализованно фильтрация по order в таблице location_seat_rows
         $tickets = collect(Tickets::where(['booking_id' => $book_id])->get())->sortBy(function ($item) {
             return $item['location_seat']['number'];
+        })->sortBy(function ($item) {
+            $location_seat = Location_seat::with(['location_seat_row'])->where(['ticket_id'=>$item->id])->first();
+            return $location_seat->location_seat_row->order;
         });
 
 
