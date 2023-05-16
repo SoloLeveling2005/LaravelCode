@@ -16,8 +16,8 @@ class Show extends Model
         return $this->belongsTo(Concert::class, 'concert_id', 'id');
     }
 
-    public function locationSeatRow()
+    public function location_seat_rows()
     {
-        return $this->hasMany(LocationSeatRow::class, 'show_id', 'id');
+        return $this->hasMany(Location_seat_row::class, 'show_id', 'id');
     }
 }

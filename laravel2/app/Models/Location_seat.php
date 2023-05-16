@@ -16,7 +16,7 @@ class Location_seat extends Model
 
     public function location_seat_row()
     {
-        return $this->belongsTo(Location_seatRow::class, 'location_seat_row_id', 'id');
+        return $this->belongsTo(Location_seat_row::class, 'location_seat_row_id', 'id');
     }
 
     public function reservation()

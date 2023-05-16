@@ -4,7 +4,7 @@ namespace App\Http\Resources\Tickects;
 
 use App\Models\Location;
 use App\Models\Location_seat;
-use App\Models\Location_seatRow;
+use App\Models\Location_seat_row;
 use App\Models\Show;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -19,7 +19,7 @@ class Ticket extends JsonResource
     public function toArray($request)
     {
         $location_seat = Location_seat::where(['ticket_id' => $this->id])->first();
-        $location_seat_row = Location_seatRow::where(['id' => $location_seat->location_seat_row_id])->first();
+        $location_seat_row = Location_seat_row::where(['id' => $location_seat->location_seat_row_id])->first();
         $show = Show::with(['concert'])->where(['id' => $location_seat_row->show_id])->first();
         $concert = $show->concert;
         $location = Location::where(['id' => $concert->location_id])->first();

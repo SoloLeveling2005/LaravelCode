@@ -3,7 +3,7 @@
 namespace App\Http\Resources\ConcertSeating;
 
 use App\Models\Location_seat;
-use App\Models\Location_seatRow;
+use App\Models\Location_seat_row;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class RowResource extends JsonResource
@@ -16,7 +16,7 @@ class RowResource extends JsonResource
      */
     public function toArray($request)
     {
-        $rows = Location_seatRow::where(['show_id' => $this->id])->get();
+        $rows = Location_seat_row::where(['show_id' => $this->id])->get();
         return [
 
             'id' => $this->id,
