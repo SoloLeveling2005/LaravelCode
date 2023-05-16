@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\Concerts\ConcertShowCollection;
 use App\Models\Booking;
 use App\Models\Concert;
 use App\Models\Location_seat;
 use App\Models\Tickets;
 use Illuminate\Http\Request;
-use App\Http\Resources\Concerts\ConsertResourceCollection;
 use App\Http\Resources\Concerts\ConsertResource;
 use App\Http\Resources\ConcertSeating\RowResource;
 use App\Http\Resources\Tickects\Ticket;
+use App\Http\Resources\ConcertBooking\Ticket as ConcertTicket;
 use App\Models\Location;
 use App\Models\Location_seat_row;
 use App\Models\Reservation;
@@ -210,11 +209,11 @@ class ApiController extends Controller
     {
         $valid_data = $request->validate([
             "reservation_token"=> ['required'],
-            "name"=> ['required'],
-            "address"=> ['required'],
-            "city"=> ['required'],
-            "zip"=> ['required'],
-            "country"=> ['required']
+            "name"=> ['required', 'string'],
+            "address"=> ['required', 'string'],
+            "city"=> ['required', 'string'],
+            "zip"=> ['required', 'string'],
+            "country"=> ['required', 'string']
         ]);
         $reservation = Reservation::where(['token'=>$valid_data['reservation_token']])->first();
         if (!$reservation) {
@@ -230,17 +229,24 @@ class ApiController extends Controller
             'zip'=>$valid_data['zip'],
             'country'=>$valid_data['country'],
         ]);
-
+        $tickets = [];
         foreach ($seats as $seat) {
             $code = Str::random(10);
             $ticket = Tickets::create([
                 'code'=>$code,
                 'booking_id'=>$booking->id
             ]);
+
             $seat->ticket_id = $ticket->id;
             $seat->reservation_id = null;
             $seat->save();
+
+            $tickets[] = $ticket;
         }
+
+
+        return response()->json(ConcertTicket::collection(collect($tickets)), 200);
+
 
 
 
